@@ -1,0 +1,71 @@
+name: merge events
+
+# クラウドルーチンは main へ直接 push できないことがあり、その場合 claude/* ブランチへ push してくる。
+# 「変更が events.md だけ」かつ「書式が正しい」ときに限り main へ取り込む。
+on:
+  push:
+    branches: ["claude/**"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: merge-events
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      BRANCH: ${{ github.ref_name }}
+    steps:
+      # main を checkout する。検証スクリプトは必ず main のものを使う
+      # （ブランチ側のスクリプトを実行すると、検証をすり抜ける変更を持ち込めてしまう）
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 変更が events.md だけであることを確認
+        id: diff
+        run: |
+          git fetch origin "refs/heads/$BRANCH"
+          changed="$(git diff --name-only origin/main...FETCH_HEAD)"
+          echo "changed files:"
+          echo "$changed"
+          if [ -z "$changed" ]; then
+            echo "main との差分なし"
+            echo "apply=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$changed" != "events.md" ]; then
+            echo "::error::events.md 以外が変更されているため取り込まない"
+            exit 1
+          fi
+          git show FETCH_HEAD:events.md > events.md
+          echo "apply=true" >> "$GITHUB_OUTPUT"
+
+      - name: 書式を検証
+        if: steps.diff.outputs.apply == 'true'
+        run: python scripts/events.py check events.md
+
+      - name: main へ取り込む
+        if: steps.diff.outputs.apply == 'true'
+        run: |
+          if git diff --quiet; then
+            echo "main と同じ内容"
+          else
+            git config user.name "omnia-bot"
+            git config user.email "omnia-bot@users.noreply.github.com"
+            git commit -am "events: $BRANCH を取り込み"
+            git push origin main
+          fi
+
+      - name: 取り込み済みのブランチを消す
+        if: steps.diff.outputs.apply == 'true'
+        run: git push origin --delete "$BRANCH" || true
