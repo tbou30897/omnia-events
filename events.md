@@ -46,4 +46,3 @@ kind は `doujin` / `coffee`。開催日は `YYYY-MM-DD`（複数日は `..` で
 - [coffee] 2026-10-14..2026-10-17 | SCAJ 2026（ワールド スペシャルティコーヒー カンファレンス アンド エキシビション） | 東京ビッグサイト 南展示棟1-4ホール | 東京 | - | #コーヒー #展示会 | https://scajconference.jp/ | 要事前登録（一人ずつ）。出展募集は終了
 - [coffee] 2026-10-30..2026-11-01 | YOKOHAMA COFFEE FESTIVAL 2026 | 日本丸メモリアルパーク アリーナ広場 | 神奈川 | - | #コーヒー #マルシェ | https://www.instagram.com/p/DbSDgltJR99/ | 公式Instagramで開催告知。出店店舗など詳細は順次発表
 - [coffee] 2026-10-31..2026-11-01 | GUNMA Takasaki Coffee Festival 珈琲愉時 | 高崎市役所前広場（城址公園）・高崎公園 | 群馬 | - | #コーヒー #マルシェ | https://www.instagram.com/gunma_coffee_fes/ | 入場無料。フード/マルシェ出店を公式SNSのDMで募集中（締切日は不明）
-
